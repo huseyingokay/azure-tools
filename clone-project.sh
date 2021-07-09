@@ -7,6 +7,7 @@ if [[ ! -f "/input/$slug.zip" ]]; then
     echo "================Cloning the project: $(date)"
     cd input
     git clone https://github.com/$slug $slug
+    cd ..
     zip $slug
     cp $slug.zip $AZ_BATCH_TASK_WORKING_DIR
     unzip $slug.zip

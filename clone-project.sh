@@ -4,7 +4,7 @@ sha=$2
 projectname=${slug%/*}
 cd ~/
 
-if [[ ! -f "/input/$projectname.zip" ]]; then
+if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip" ]]; then
     echo "================Cloning the project: $(date)"
     cd input
     git clone https://github.com/$slug $slug

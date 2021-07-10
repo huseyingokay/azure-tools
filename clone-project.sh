@@ -9,8 +9,8 @@ if [[ ! -f "/input/$slug.zip" ]]; then
     cd input
     git clone https://github.com/$slug $slug
     cd $AZ_BATCH_TASK_WORKING_DIR/input
-    zip $projectname
-    cp $projectname $AZ_BATCH_TASK_WORKING_DIR
+    zip -r codingchili.zip codingchili
+    cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR
     cd $AZ_BATCH_TASK_WORKING_DIR
     unzip $projectname
     cd $slug
@@ -18,7 +18,7 @@ if [[ ! -f "/input/$slug.zip" ]]; then
     echo "SHA is $(git rev-parse HEAD)"
 else
     cp /input/$slug.zip .
-    unzip $projectname
+    unzip $projectname.zip
     cd $slug
     git checkout $sha
     echo "$slug already exists"

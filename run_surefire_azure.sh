@@ -23,13 +23,10 @@ line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
 slug=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f1-2 | rev)
-echo "--slug: $slug"
-project_name=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f1 | rev)
-echo "--project_name: $project_name"
+project_name=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f2)
+echo "================project nameeee: $project_name"
 sha=$(echo ${line} | cut -d',' -f2)
-echo "--sha: $sha"
 module=$(echo ${line} | cut -d',' -f3)
-echo "--module: $module"
 
 MVNOPTIONS="-Ddependency-check.skip=true -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 

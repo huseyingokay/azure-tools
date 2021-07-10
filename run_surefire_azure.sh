@@ -23,6 +23,7 @@ line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
 slug=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f1-2 | rev)
+project_name=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f1 | rev)
 sha=$(echo ${line} | cut -d',' -f2)
 module=$(echo ${line} | cut -d',' -f3)
 
@@ -33,7 +34,7 @@ short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "$sha"
+bash $dir/clone-project.sh "$slug" "$project_name" "$sha"
 cd ~/$slug
 
 echo "================Setting up test name"

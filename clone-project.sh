@@ -9,7 +9,8 @@ if [[ ! -f "/input/$slug.zip" ]]; then
     cd input
     git clone https://github.com/$slug $slug
     cd $AZ_BATCH_TASK_WORKING_DIR/input
-    zip -r codingchili.zip codingchili
+    zip -r $projectname.zip $projectname
+    rm -r $projectname
     cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR
     cd $AZ_BATCH_TASK_WORKING_DIR
     unzip $projectname

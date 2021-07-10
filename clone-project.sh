@@ -1,4 +1,3 @@
-
 slug=$1
 sha=$2
 projectname=${slug%/*}
@@ -18,7 +17,7 @@ if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip" ]]; then
     git checkout $sha
     echo "SHA is $(git rev-parse HEAD)"
 else
-    cp /input/$projectname.zip .
+    cp $AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip .
     unzip $projectname.zip
     cd $slug
     git checkout $sha

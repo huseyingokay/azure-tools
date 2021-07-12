@@ -18,12 +18,13 @@ mkdir -p ${RESULTSDIR}
 cd ~/
 projfile=$1
 rounds=$2
+
 line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
 slug=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f1-2 | rev)
 sha=$(echo ${line} | cut -d',' -f2)
-
+projectname=${slug%/*}
 fullTestName="running.idempotent"
 module=$(echo ${line} | cut -d',' -f3)
 
@@ -35,39 +36,39 @@ modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "$sha"
-cd ~/$slug
 
-echo "================Setting up test name: $(date)"
-testarg=""
-if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
-    echo "No test name given for isolation. Exiting immediately"
-    date
-    exit 1
-else
-    formatTest="$(echo $fullTestName | rev | cut -d. -f2 | rev)#$(echo $fullTestName | rev | cut -d. -f1 | rev )"
-    class="$(echo $fullTestName | rev | cut -d. -f2 | rev)"
-    echo "Test name is given. Running isolation on the specific test: $formatTest"
-    echo "class: $class"
-    testarg="-Dtest=$formatTest"
-fi
+if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
+    cd ~/input/$slug
 
-if [[ -z $module ]]; then
-    module=$classloc
-    while [[ "$module" != "." && "$module" != "" ]]; do
-	module=$(echo $module | rev | cut -d'/' -f2- | rev)
-	echo "Checking for pom at: $module"
-	if [[ -f $module/pom.xml ]]; then
-	    break;
-	fi
-    done
-else
-    echo "Module passed in from csv."
-fi
-echo "Location of module: $module"
+    echo "================Setting up test name: $(date)"
+    testarg=""
+    if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
+        echo "No test name given for isolation. Exiting immediately"
+        date
+        exit 1
+    else
+        formatTest="$(echo $fullTestName | rev | cut -d. -f2 | rev)#$(echo $fullTestName | rev | cut -d. -f1 | rev )"
+        class="$(echo $fullTestName | rev | cut -d. -f2 | rev)"
+        echo "Test name is given. Running isolation on the specific test: $formatTest"
+        echo "class: $class"
+        testarg="-Dtest=$formatTest"
+    fi
 
-# echo "================Installing the project"
-projectname=${slug%/*}
-if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip" ]]; then
+    if [[ -z $module ]]; then
+        module=$classloc
+        while [[ "$module" != "." && "$module" != "" ]]; do
+        module=$(echo $module | rev | cut -d'/' -f2- | rev)
+        echo "Checking for pom at: $module"
+        if [[ -f $module/pom.xml ]]; then
+            break;
+        fi
+        done
+    else
+        echo "Module passed in from csv."
+    fi
+    echo "Location of module: $module"
+
+    # echo "================Installing the project"
     bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}"
     ret=${PIPESTATUS[0]}
     mv mvn-install.log ${RESULTSDIR}
@@ -76,6 +77,36 @@ if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip" ]]; then
         echo "Compilation failed. Actual: $ret"
         exit 1
     fi
+else
+    cd ~/$slug
+
+    echo "================Setting up test name: $(date)"
+    testarg=""
+    if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
+        echo "No test name given for isolation. Exiting immediately"
+        date
+        exit 1
+    else
+        formatTest="$(echo $fullTestName | rev | cut -d. -f2 | rev)#$(echo $fullTestName | rev | cut -d. -f1 | rev )"
+        class="$(echo $fullTestName | rev | cut -d. -f2 | rev)"
+        echo "Test name is given. Running isolation on the specific test: $formatTest"
+        echo "class: $class"
+        testarg="-Dtest=$formatTest"
+    fi
+
+    if [[ -z $module ]]; then
+        module=$classloc
+        while [[ "$module" != "." && "$module" != "" ]]; do
+        module=$(echo $module | rev | cut -d'/' -f2- | rev)
+        echo "Checking for pom at: $module"
+        if [[ -f $module/pom.xml ]]; then
+            break;
+        fi
+        done
+    else
+        echo "Module passed in from csv."
+    fi
+    echo "Location of module: $module"
 fi
 
 cd ~/$slug

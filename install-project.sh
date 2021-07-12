@@ -143,7 +143,7 @@ elif [[ "$modifiedslug_with_sha" == "apache.struts-13d9053" || "$modifiedslug_wi
 else
     mvn clean install -am -pl $module -DskipTests ${MVNOPTIONS} |& tee mvn-install.log
 fi
-
+cd $AZ_BATCH_TASK_WORKING_DIR/$input_container
 zip -r $projectname.zip $projectname
 rm -r $projectname
 cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR

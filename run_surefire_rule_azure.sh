@@ -37,37 +37,41 @@ modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "$sha"
 
+currentdir=$slug
 if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
-    cd ~/input/$slug
-    echo "================New Project"
-    echo "================Setting up test name: $(date)"
-    testarg=""
-    if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
-        echo "No test name given for isolation. Exiting immediately"
-        date
-        exit 1
-    else
-        formatTest="$(echo $fullTestName | rev | cut -d. -f2 | rev)#$(echo $fullTestName | rev | cut -d. -f1 | rev )"
-        class="$(echo $fullTestName | rev | cut -d. -f2 | rev)"
-        echo "Test name is given. Running isolation on the specific test: $formatTest"
-        echo "class: $class"
-        testarg="-Dtest=$formatTest"
-    fi
+    currentdir=input/$slug
+fi
 
-    if [[ -z $module ]]; then
-        module=$classloc
-        while [[ "$module" != "." && "$module" != "" ]]; do
-        module=$(echo $module | rev | cut -d'/' -f2- | rev)
-        echo "Checking for pom at: $module"
-        if [[ -f $module/pom.xml ]]; then
-            break;
-        fi
-        done
-    else
-        echo "Module passed in from csv."
-    fi
-    echo "Location of module: $module"
+cd ~/$currentdir
+echo "================Setting up test name: $(date)"
+testarg=""
+if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
+    echo "No test name given for isolation. Exiting immediately"
+    date
+    exit 1
+else
+    formatTest="$(echo $fullTestName | rev | cut -d. -f2 | rev)#$(echo $fullTestName | rev | cut -d. -f1 | rev )"
+    class="$(echo $fullTestName | rev | cut -d. -f2 | rev)"
+    echo "Test name is given. Running isolation on the specific test: $formatTest"
+    echo "class: $class"
+    testarg="-Dtest=$formatTest"
+fi
 
+if [[ -z $module ]]; then
+    module=$classloc
+    while [[ "$module" != "." && "$module" != "" ]]; do
+    module=$(echo $module | rev | cut -d'/' -f2- | rev)
+    echo "Checking for pom at: $module"
+    if [[ -f $module/pom.xml ]]; then
+        break;
+    fi
+    done
+else
+    echo "Module passed in from csv."
+fi
+echo "Location of module: $module"
+
+if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
     # echo "================Installing the project"
     cd ~/input
     bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}"
@@ -78,36 +82,6 @@ if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
         echo "Compilation failed. Actual: $ret"
         exit 1
     fi
-else
-    cd ~/$slug
-    echo "================Project already exists"
-    echo "================Setting up test name: $(date)"
-    testarg=""
-    if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
-        echo "No test name given for isolation. Exiting immediately"
-        date
-        exit 1
-    else
-        formatTest="$(echo $fullTestName | rev | cut -d. -f2 | rev)#$(echo $fullTestName | rev | cut -d. -f1 | rev )"
-        class="$(echo $fullTestName | rev | cut -d. -f2 | rev)"
-        echo "Test name is given. Running isolation on the specific test: $formatTest"
-        echo "class: $class"
-        testarg="-Dtest=$formatTest"
-    fi
-
-    if [[ -z $module ]]; then
-        module=$classloc
-        while [[ "$module" != "." && "$module" != "" ]]; do
-        module=$(echo $module | rev | cut -d'/' -f2- | rev)
-        echo "Checking for pom at: $module"
-        if [[ -f $module/pom.xml ]]; then
-            break;
-        fi
-        done
-    else
-        echo "Module passed in from csv."
-    fi
-    echo "Location of module: $module"
 fi
 
 cd ~/$slug

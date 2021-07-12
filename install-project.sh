@@ -1,4 +1,3 @@
-
 slug=$1
 MVNOPTIONS=$2
 USER=$3
@@ -12,7 +11,8 @@ projectname=${slug%/*}
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
-if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip"]]; then
+
+if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip" ]]; then
     exit 1
 fi
 

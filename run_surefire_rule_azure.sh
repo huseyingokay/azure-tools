@@ -73,7 +73,6 @@ echo "Location of module: $module"
 
 if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
     # echo "================Installing the project"
-    cd ~/input
     bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}"
     ret=${PIPESTATUS[0]}
     mv mvn-install.log ${RESULTSDIR}

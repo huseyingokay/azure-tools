@@ -146,7 +146,8 @@ fi
 
 echo "================PWD: $PWD"
 echo $PWD
-cd $AZ_BATCH_TASK_WORKING_DIR/$input_container
+cd ~/$AZ_BATCH_TASK_WORKING_DIR/$input_container
+echo $PWD
 zip -r $projectname.zip $projectname
 rm -r $projectname
 cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR

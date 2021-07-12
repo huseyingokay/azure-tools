@@ -37,9 +37,9 @@ modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "$sha"
 
-if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
+if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
     cd ~/input/$slug
-
+    echo "================New Project"
     echo "================Setting up test name: $(date)"
     testarg=""
     if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then
@@ -79,7 +79,7 @@ if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
     fi
 else
     cd ~/$slug
-
+    echo "================Project already exists"
     echo "================Setting up test name: $(date)"
     testarg=""
     if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then

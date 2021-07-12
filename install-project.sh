@@ -7,6 +7,7 @@ sha=$5
 dir=$6
 fullTestName=$7
 RESULTSDIR=$8
+input_container=$9
 projectname=${slug%/*}
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')

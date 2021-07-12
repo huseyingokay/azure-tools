@@ -6,10 +6,12 @@ sha=$5
 dir=$6
 fullTestName=$7
 RESULTSDIR=$8
+projectname=${slug%/*}
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
+modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
 
 echo "================Installing the project: $(date)"
 if [[ "$slug" == "apache/incubator-dubbo" ]]; then
@@ -143,8 +145,7 @@ else
 fi
 
 cd ~/
-echo "================PWD: $PWD"
-zip -r $projectname.zip $projectname
+zip -r "$modifiedslug_with_sha=$modified_module".zip $projectname
 cp $projectname.zip ~/input
 cd ~/$slug
 

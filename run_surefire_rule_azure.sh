@@ -95,6 +95,8 @@ echo "polluter,victim,hash,round_num" > $hashfile
 mkdir -p ${RESULTSDIR}/pair-results
 
 modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+echo "================modified_module $modified_module"
+echo "================module: $module"
 tl="$dir/module-summarylistgen-idempotent/${modifiedslug_with_sha}=${modified_module}_output.csv"
 cp $tl ${RESULTSDIR}/
 total=$(cat $tl | wc -l)

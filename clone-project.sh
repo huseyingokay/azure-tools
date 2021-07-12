@@ -16,14 +16,14 @@ echo "modifiedslug_with_sha: $modifiedslug_with_sha"
 
 cd ~/
 
-if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/"$modifiedslug_with_sha=$modified_module".zip" ]]; then
+if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/"$modifiedslug_with_sha".zip" ]]; then
     git clone https://github.com/$slug $slug
     cd $AZ_BATCH_TASK_WORKING_DIR/$input_container/$slug
     git checkout $sha
     echo "SHA is $(git rev-parse HEAD)"
 else
-    cp $AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip .
-    unzip $projectname.zip
+    cp $AZ_BATCH_TASK_WORKING_DIR/input/$modifiedslug_with_sha.zip .
+    unzip $modifiedslug_with_sha.zip
     cd $slug
     git checkout $sha
     echo "$slug already exists"

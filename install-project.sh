@@ -144,7 +144,7 @@ else
     mvn clean install -am -pl $module -DskipTests ${MVNOPTIONS} |& tee mvn-install.log
 fi
 
-zip -r $projectname.zip $projectname
+zip -r $projectname.zip $projectname #change
 rm -r $projectname
 cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR
 cd $AZ_BATCH_TASK_WORKING_DIR

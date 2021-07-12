@@ -144,7 +144,8 @@ else
     mvn clean install -am -pl $module -DskipTests ${MVNOPTIONS} |& tee mvn-install.log
 fi
 
-echo "================PWD: $pwd"
+echo "================PWD: $PWD"
+echo $PWD
 cd $AZ_BATCH_TASK_WORKING_DIR/$input_container
 zip -r $projectname.zip $projectname
 rm -r $projectname

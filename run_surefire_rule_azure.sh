@@ -18,6 +18,7 @@ mkdir -p ${RESULTSDIR}
 cd ~/
 projfile=$1
 rounds=$2
+input_container=$3
 
 line=$(head -n 1 $projfile)
 
@@ -28,18 +29,18 @@ projectname=${slug%/*}
 fullTestName="running.idempotent"
 module=$(echo ${line} | cut -d',' -f3)
 
-MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/input/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/$input_container/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "$sha"
+bash $dir/clone-project.sh "$slug" "$sha" "$input_container"
 
 currentdir=$slug
-if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
-    currentdir=input/$slug
+if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/$input_container/$projectname" ]]; then
+    currentdir=$input_container/$slug
 fi
 
 cd ~/$currentdir
@@ -71,8 +72,9 @@ else
 fi
 echo "Location of module: $module"
 
-if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname" ]]; then
+if [[ -d "$AZ_BATCH_TASK_WORKING_DIR/$input_container/$projectname" ]]; then
     # echo "================Installing the project"
+    cd ~/$input_container
     bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}"
     ret=${PIPESTATUS[0]}
     mv mvn-install.log ${RESULTSDIR}

@@ -146,7 +146,7 @@ fi
 
 cd ~/
 zip -r "$modifiedslug_with_sha=$modified_module".zip $projectname
-cp $projectname.zip ~/input
+cp "$modifiedslug_with_sha=$modified_module".zip ~/input
 cd ~/$slug
 
 ret=${PIPESTATUS[0]}

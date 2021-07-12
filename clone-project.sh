@@ -5,12 +5,14 @@ projectname=${slug%/*}
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+
 
 echo "in clone-project.sh"
 echo "slug: $slug"
 echo "sha: $sha"
 echo "projectname: $projectname"
+
+echo "modifiedslug_with_sha: $modifiedslug_with_sha"
 
 cd ~/
 

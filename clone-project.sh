@@ -6,6 +6,7 @@ cd ~/
 
 if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/$projectname.zip" ]]; then
     echo "================Cloning the project: $(date)"
+    echo "================Input: $input_container"
     cd $input_container
     git clone https://github.com/$slug $slug
     cd $AZ_BATCH_TASK_WORKING_DIR/$input_container/$slug

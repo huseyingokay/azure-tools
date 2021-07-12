@@ -7,6 +7,7 @@ sha=$5
 dir=$6
 fullTestName=$7
 RESULTSDIR=$8
+projectname=${slug%/*}
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
@@ -142,6 +143,13 @@ elif [[ "$modifiedslug_with_sha" == "apache.struts-13d9053" || "$modifiedslug_wi
 else
     mvn clean install -am -pl $module -DskipTests ${MVNOPTIONS} |& tee mvn-install.log
 fi
+
+zip -r $projectname.zip $projectname
+rm -r $projectname
+cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR
+cd $AZ_BATCH_TASK_WORKING_DIR
+unzip $projectname
+cd $slug
 
 ret=${PIPESTATUS[0]}
 exit $ret

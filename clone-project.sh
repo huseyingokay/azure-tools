@@ -7,13 +7,7 @@ if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip" ]]; then
     echo "================Cloning the project: $(date)"
     cd input
     git clone https://github.com/$slug $slug
-    cd $AZ_BATCH_TASK_WORKING_DIR/input
-    zip -r $projectname.zip $projectname
-    rm -r $projectname
-    cp $projectname.zip $AZ_BATCH_TASK_WORKING_DIR
-    cd $AZ_BATCH_TASK_WORKING_DIR
-    unzip $projectname
-    cd $slug
+    cd $AZ_BATCH_TASK_WORKING_DIR/input/$slug
     git checkout $sha
     echo "SHA is $(git rev-parse HEAD)"
 else

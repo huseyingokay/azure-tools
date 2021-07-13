@@ -1,15 +1,11 @@
 slug=$1
 sha=$2
-projdir=$slug | cut -d'-' -f1 | tr . /
-projectname=${slug%/*}
-
+projdir=$(echo ${slug} | cut -d'-' -f1 | tr . /)
 
 echo "in clone-project.sh"
 echo "slug: $slug"
 echo "sha: $sha"
-echo "projectname: $projectname"
 echo "projdir: $projdir"
-echo "modifiedslug_with_sha: $modifiedslug_with_sha"
 
 cd ~/
 

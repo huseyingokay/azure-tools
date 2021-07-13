@@ -32,9 +32,11 @@ MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKI
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
+modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+modified_slug_module="${modifiedslug_with_sha}=${modified_module}"
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
+bash $dir/clone-project.sh "$slug" "$modified_slug_module"
 cd ~/$slug
 
 if [[ -z $module ]]; then
@@ -77,8 +79,6 @@ echo "================Run iFixFlakies"
 cd ~/$slug
 bash $ifdir/pom-modify/modify-project.sh .
 
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
-modified_slug_module="${modifiedslug_with_sha}=${modified_module}"
 permInputFile="$dir/module-summarylistgen/${modified_slug_module}_output.csv"
 json_file="$dir/flaky-lists-jsons/${modifiedslug_with_sha}=${test}_output.json"
 

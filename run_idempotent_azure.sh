@@ -31,9 +31,11 @@ MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKI
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
+modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+modified_slug_module="${modifiedslug_with_sha}=${modified_module}"
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
+bash $dir/clone-project.sh "$slug" "$modified_slug_module"
 cd ~/$slug
 
 if [[ -z $module ]]; then
@@ -90,8 +92,7 @@ echo "================Setup and run iDFlakies: $(date)"
 cd ~/$slug
 bash $dir/idflakies-pom-modify/modify-project.sh . "1.2.0-SNAPSHOT" "1.3-SNAPSHOT"
 
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
-modified_slug_module="${modifiedslug_with_sha}=${modified_module}"
+
 if [[ "$runclasses" == "tests" ]]; then
     # Verify some found NI tests
     permInputFile="$dir/module-summarylistgen-idempotent/${modified_slug_module}_output.csv"

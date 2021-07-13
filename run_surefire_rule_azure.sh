@@ -26,18 +26,18 @@ sha=$(echo ${line} | cut -d',' -f2)
 
 fullTestName="running.idempotent"
 module=$(echo ${line} | cut -d',' -f3)
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+
 
 MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/input/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
-
+modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
 cd ~/$slug
-modifiedslug_with_sha="${modifiedslug}-${short_sha}"
+modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
 echo "================Setting up test name: $(date)"
 testarg=""
 if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then

@@ -26,6 +26,7 @@ sha=$(echo ${line} | cut -d',' -f2)
 
 fullTestName="running.idempotent"
 module=$(echo ${line} | cut -d',' -f3)
+modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
 
 MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/input/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
@@ -94,7 +95,7 @@ hashfile="${RESULTSDIR}/p-v-hash.csv"
 echo "polluter,victim,hash,round_num" > $hashfile
 mkdir -p ${RESULTSDIR}/pair-results
 
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+
 tl="$dir/module-summarylistgen-idempotent/${modifiedslug_with_sha}=${modified_module}_output.csv"
 cp $tl ${RESULTSDIR}/
 total=$(cat $tl | wc -l)

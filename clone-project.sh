@@ -5,7 +5,6 @@ sha=$(echo $modified_slug_sha_module | rev | cut -d'=' -f2 | cut -d'-' -f1 | rev
 echo "in clone-project.sh"
 echo "slug: $slug"
 echo "sha: $sha"
-echo "projdir: $projdir"
 
 cd ~/
 
@@ -16,7 +15,7 @@ if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/"$modified_slug_sha_module".zip" ]]
     echo "SHA is $(git rev-parse HEAD)"
 else
     cp $AZ_BATCH_TASK_WORKING_DIR/input/$modified_slug_sha_module.zip .
-    unzip $slug.zip
+    unzip $modified_slug_sha_module.zip
     cd $slug
     git checkout $sha
     echo "$slug already exists"

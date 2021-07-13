@@ -32,12 +32,12 @@ MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKI
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
-modifiedslug_with_sha="${modifiedslug}-${short_sha}"
+
 
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
 cd ~/$slug
-
+modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 echo "================Setting up test name: $(date)"
 testarg=""
 if [[ $fullTestName == "-" ]] || [[ "$fullTestName" == "" ]]; then

@@ -23,7 +23,7 @@ sha=$2 #$(echo ${line} | cut -d',' -f2)
 module=$3 #$(echo ${line} | cut -d',' -f3)
 echo "================Starting experiment for input: $slug $sha $module"
 
-MVNOPTIONS="-Ddependency-check.skip=true -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/input/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
@@ -35,7 +35,7 @@ mkdir -p ${RESULTSDIR}
 
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "$sha"
+bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
 ret=${PIPESTATUS[0]}
 if [[ $ret != 0 ]]; then
     echo "Git checkout failed!"

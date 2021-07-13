@@ -52,7 +52,7 @@ echo "Location of module: $module"
 
 cd ~/$slug
 echo "================Compiling: $(date)"
-
+mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/output/${modifiedslug_with_sha}=${modified_module}.txt
 
 endtime=$(date)
 echo "endtime: $endtime"

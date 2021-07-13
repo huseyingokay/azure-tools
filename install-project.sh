@@ -13,6 +13,10 @@ short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
 
+if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/input/$projectname.zip"]]; then
+    exit 1
+fi
+
 echo "================Installing the project: $(date)"
 if [[ "$slug" == "apache/incubator-dubbo" ]]; then
     sudo chown -R $USER .

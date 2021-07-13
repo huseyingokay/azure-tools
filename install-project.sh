@@ -145,8 +145,8 @@ else
 fi
 
 cd ~/
-zip -r "$modifiedslug_with_sha".zip $projectname
-cp "$modifiedslug_with_sha".zip ~/input
+zip -r "${modifiedslug_with_sha}=${modified_module}".zip $projectname
+cp "${modifiedslug_with_sha}=${modified_module}".zip ~/input
 cd ~/$slug
 
 ret=${PIPESTATUS[0]}

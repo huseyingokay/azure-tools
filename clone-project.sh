@@ -1,6 +1,6 @@
 slug=$1
-sha=$2
-projdir=$(echo ${slug} | cut -d'-' -f1 | tr . /)
+modified_slug_sha_module=$2
+sha=$(echo $modified_slug_sha_module | rev | cut -d'=' -f2 | cut -d'-' -f1 | rev)
 
 echo "in clone-project.sh"
 echo "slug: $slug"
@@ -9,17 +9,17 @@ echo "projdir: $projdir"
 
 cd ~/
 
-if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/"$slug".zip" ]]; then
-    git clone https://github.com/$projdir $projdir
-    cd $AZ_BATCH_TASK_WORKING_DIR/$input_container/$projdir
+if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/input/"$modified_slug_sha_module".zip" ]]; then
+    git clone https://github.com/$slug $slug
+    cd $AZ_BATCH_TASK_WORKING_DIR/input/$slug
     git checkout $sha
     echo "SHA is $(git rev-parse HEAD)"
 else
-    cp $AZ_BATCH_TASK_WORKING_DIR/input/$slug.zip .
+    cp $AZ_BATCH_TASK_WORKING_DIR/input/$modified_slug_sha_module.zip .
     unzip $slug.zip
-    cd $projdir
+    cd $slug
     git checkout $sha
-    echo "$projdir already exists"
+    echo "$slug already exists"
     echo "SHA is $(git rev-parse HEAD)"
 fi
 if [[ "$(git rev-parse HEAD)" == "$sha" ]]; then

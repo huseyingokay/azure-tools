@@ -1,5 +1,5 @@
 slug=$1
-MVNOPTIONS="$2 -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/input/dependencies"
+MVNOPTIONS=$2
 USER=$3
 module=$4
 sha=$5

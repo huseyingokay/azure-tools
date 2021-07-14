@@ -20,7 +20,6 @@ projfile=$1
 rounds=$2
 input_container=$3
 pool_id=$4
-output_container=$5
 line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
@@ -69,10 +68,10 @@ cd ~/
 
 case `grep -q '\[INFO\] BUILD SUCCESS' "com=$modifiedslug_with_sha=$modified_module".txt ; echo $?` in
   0)
-    echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee -a /$AZ_BATCH_TASK_WORKING_DIR/"$pool_id-results".txt
+    echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee -a /$AZ_BATCH_TASK_WORKING_DIR/$input_container/"$pool_id-results".txt
     ;;
   1)
-    echo "com=${modifiedslug_with_sha}=${modified_module} is failed." | tee -a $AZ_BATCH_TASK_WORKING_DIR/"$pool_id-results".txt
+    echo "com=${modifiedslug_with_sha}=${modified_module} is failed." | tee -a $AZ_BATCH_TASK_WORKING_DIR/$input_container/"$pool_id-results".txt
     ;;
 esac
 

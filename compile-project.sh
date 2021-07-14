@@ -54,8 +54,10 @@ echo "Location of module: $module"
 echo "================Compiling: $(date)"
 mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/$"com={$modifiedslug_with_sha}=${modified_module}".txt
 cd ~/
-zip -r "${modifiedslug_with_sha}=${modified_module}".zip ${slug%/*}
-cp "${modifiedslug_with_sha}=${modified_module}".zip ~/$input_container
+if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/"${modifiedslug_with_sha}=${modified_module}".zip" ]]; then
+    zip -r "${modifiedslug_with_sha}=${modified_module}".zip ${slug%/*}
+    cp "${modifiedslug_with_sha}=${modified_module}".zip ~/$input_container
+fi
 
 endtime=$(date)
 echo "endtime: $endtime"

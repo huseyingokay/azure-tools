@@ -18,7 +18,8 @@ mkdir -p ${RESULTSDIR}
 cd ~/
 projfile=$1
 rounds=$2
-runclasses="$3"
+input_container=$3
+runclasses="$4"
 line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
@@ -26,7 +27,7 @@ slug=$(echo ${line} | cut -d',' -f1 | rev | cut -d'/' -f1-2 | rev)
 sha=$(echo ${line} | cut -d',' -f2)
 module=$(echo ${line} | cut -d',' -f3)
 
-MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/input/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/$input_container/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
@@ -47,7 +48,7 @@ fi
 echo "Location of module: $module"
 
 # echo "================Installing the project"
-bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}"
+bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
 ret=${PIPESTATUS[0]}
 mv mvn-install.log ${RESULTSDIR}
 if [[ $ret != 0 ]]; then

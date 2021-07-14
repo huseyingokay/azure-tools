@@ -10,13 +10,19 @@ echo "modified_slug_sha_module: $modified_slug_sha_module"
 
 cd ~/
 
-if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/"$modified_slug_sha_module".zip" ]]; then
+
+if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/$slug" ]]; then
+    echo "The project is already in the working directory"
+    cd $AZ_BATCH_TASK_WORKING_DIR/$slug
+    git checkout $sha
+    echo "SHA is $(git rev-parse HEAD)"
+else if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/$modified_slug_sha_module.zip" ]]; then
     git clone https://github.com/$slug $slug
     cd $AZ_BATCH_TASK_WORKING_DIR/$slug
     git checkout $sha
     echo "SHA is $(git rev-parse HEAD)"
 else
-    echo "$slug already exists"
+    echo "$slug already exists in the container"
     cp $AZ_BATCH_TASK_WORKING_DIR/$input_container/$modified_slug_sha_module.zip .
     unzip $modified_slug_sha_module.zip
     cd $AZ_BATCH_TASK_WORKING_DIR/$slug

@@ -18,6 +18,7 @@ mkdir -p ${RESULTSDIR}
 cd ~/
 projfile=$1
 rounds=$2
+input_container=$3
 line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
@@ -33,7 +34,7 @@ short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
+bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}" "$input_container"
 cd ~/$slug
 
 if [[ -z $module ]]; then
@@ -50,9 +51,8 @@ else
 fi
 echo "Location of module: $module"
 
-cd ~/$slug
 echo "================Compiling: $(date)"
-mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/output/${modifiedslug_with_sha}=${modified_module}.txt
+mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/$"com={modifiedslug_with_sha}=${modified_module}".txt
 
 endtime=$(date)
 echo "endtime: $endtime"

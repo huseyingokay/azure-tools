@@ -6,6 +6,7 @@ sha=$(echo $modified_slug_sha_module | rev | cut -d'=' -f2 | cut -d'-' -f1 | rev
 echo "in clone-project.sh"
 echo "slug: $slug"
 echo "sha: $sha"
+echo "modified_slug_sha_module: $modified_slug_sha_module"
 
 cd ~/
 

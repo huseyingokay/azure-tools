@@ -54,6 +54,7 @@ echo "Location of module: $module"
 echo "================Compiling: $(date)"
 mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/"com=${modifiedslug_with_sha}=${modified_module}".txt
 
+cd ~/
 if grep -Fxq "BUILD SUCCESS" "com=$modifiedslug_with_sha=$modified_module".txt 
 then
     echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee –a /$AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt

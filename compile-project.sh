@@ -55,12 +55,15 @@ echo "================Compiling: $(date)"
 mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/"com=${modifiedslug_with_sha}=${modified_module}".txt
 
 cd ~/
-if grep -Fxq "BUILD SUCCESS" "com=$modifiedslug_with_sha=$modified_module".txt 
-then
+
+case `grep -Fx "BUILD SUCCESS" "com=$modifiedslug_with_sha=$modified_module".txt ; echo $?` in
+  0)
     echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee –a /$AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt
-else
+    ;;
+  1)
     echo "com=${modifiedslug_with_sha}=${modified_module} is failed." | tee –a $AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt
-fi
+    ;;
+esac
 
 if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/"${modifiedslug_with_sha}=${modified_module}".zip" ]]; then
     zip -r "${modifiedslug_with_sha}=${modified_module}".zip ${slug%/*}

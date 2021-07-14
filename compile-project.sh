@@ -58,10 +58,10 @@ cd ~/
 
 case `grep -Fx "BUILD SUCCESS" "com=$modifiedslug_with_sha=$modified_module".txt ; echo $?` in
   0)
-    echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee –a /$AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt
+    echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee -a /$AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt
     ;;
   1)
-    echo "com=${modifiedslug_with_sha}=${modified_module} is failed." | tee –a $AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt
+    echo "com=${modifiedslug_with_sha}=${modified_module} is failed." | tee -a $AZ_BATCH_TASK_WORKING_DIR/$input_container/results.txt
     ;;
 esac
 

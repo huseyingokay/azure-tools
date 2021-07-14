@@ -16,7 +16,7 @@ if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/$slug" ]]; then
     cd $AZ_BATCH_TASK_WORKING_DIR/$slug
     git checkout $sha
     echo "SHA is $(git rev-parse HEAD)"
-else if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/$modified_slug_sha_module.zip" ]]; then
+elif [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/$modified_slug_sha_module.zip" ]]; then
     git clone https://github.com/$slug $slug
     cd $AZ_BATCH_TASK_WORKING_DIR/$slug
     git checkout $sha

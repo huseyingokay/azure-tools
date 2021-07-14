@@ -20,6 +20,7 @@ projfile=$1
 rounds=$2
 input_container=$3
 pool_id=$4
+output_container=$5
 line=$(head -n 1 $projfile)
 
 echo "================Starting experiment for input: $line"
@@ -29,6 +30,8 @@ sha=$(echo ${line} | cut -d',' -f2)
 fullTestName="running.idempotent"
 module=$(echo ${line} | cut -d',' -f3)
 modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/$input_container/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
@@ -52,8 +55,15 @@ else
 fi
 echo "Location of module: $module"
 
+if [[ "$slug" == "dropwizard/dropwizard" ]]; then
+    # dropwizard module complains about missing dependency if one uses -pl for some modules. e.g., ./dropwizard-logging
+    MVNOPTIONS="${MVNOPTIONS} -am"
+elif [[ "$slug" == "fhoeben/hsac-fitnesse-fixtures" ]]; then
+    MVNOPTIONS="${MVNOPTIONS} -DskipITs"
+fi
+
 echo "================Compiling: $(date)"
-mvn compile --log-file=$AZ_BATCH_TASK_WORKING_DIR/"com=${modifiedslug_with_sha}=${modified_module}".txt
+mvn compile ${MVNOPTIONS} --log-file=$AZ_BATCH_TASK_WORKING_DIR/"com=${modifiedslug_with_sha}=${modified_module}".txt
 
 cd ~/
 

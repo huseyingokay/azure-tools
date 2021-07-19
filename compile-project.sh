@@ -12,9 +12,6 @@ echo "script dir: $dir"
 starttime=$(date)
 echo "starttime: $starttime"
 
-RESULTSDIR=~/output/
-mkdir -p ${RESULTSDIR}
-
 cd ~/
 projfile=$1
 rounds=$2
@@ -28,13 +25,16 @@ sha=$(echo ${line} | cut -d',' -f2)
 
 fullTestName="running.idempotent"
 module=$(echo ${line} | cut -d',' -f3)
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
-
-MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/$input_container/dependencies -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+modified_module=$(echo ${module} | sed 's?\./??g' | sed 's/\//+/g')
 
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
+
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/$input_container/dependencies_${modifiedslug_with_sha}=${modified_module} -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+
+cd $AZ_BATCH_TASK_WORKING_DIR/$input_container
+for i in */; do zip -rq "${i%/}.zip" "$i"; done
 
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}" "$input_container"
@@ -62,22 +62,16 @@ elif [[ "$slug" == "fhoeben/hsac-fitnesse-fixtures" ]]; then
 fi
 
 echo "================Compiling: $(date)"
-mvn compile ${MVNOPTIONS} --log-file=$AZ_BATCH_TASK_WORKING_DIR/"com=${modifiedslug_with_sha}=${modified_module}".txt
-
+bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
+ret=${PIPESTATUS[0]}
 cd ~/
 
-case `grep -q '\[INFO\] BUILD SUCCESS' "com=$modifiedslug_with_sha=$modified_module".txt ; echo $?` in
-  0)
-    echo "com=${modifiedslug_with_sha}=${modified_module} is compiled successfully." | tee -a /$AZ_BATCH_TASK_WORKING_DIR/$input_container/"$pool_id-results".txt
-    ;;
-  1)
-    echo "com=${modifiedslug_with_sha}=${modified_module} is failed." | tee -a $AZ_BATCH_TASK_WORKING_DIR/$input_container/"$pool_id-results".txt
-    ;;
-esac
+mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/
 
-if [[ ! -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/"${modifiedslug_with_sha}=${modified_module}".zip" ]]; then
-    zip -r "${modifiedslug_with_sha}=${modified_module}".zip ${slug%/*}
-    cp "${modifiedslug_with_sha}=${modified_module}".zip ~/$input_container
+if [[ $ret != 0 ]]; then 
+    echo "$line,${modifiedslug_with_sha}=${modified_module},failed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"failed-${modifiedslug_with_sha}=${modified_module}-results".txt
+else
+    echo "$line,${modifiedslug_with_sha}=${modified_module},passed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"passed-${modifiedslug_with_sha}=${modified_module}-results".txt
 fi
 
 endtime=$(date)

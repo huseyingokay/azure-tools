@@ -1,3 +1,5 @@
+#!/bin/bash
+
 slug=$1
 MVNOPTIONS=$2
 USER=$3
@@ -11,12 +13,10 @@ input_container=$9
 modifiedslug=$(echo ${slug} | sed 's;/;.;' | tr '[:upper:]' '[:lower:]')
 short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
-modified_module=$(echo ${module} | cut -d'.' -f2- | cut -c 2- | sed 's/\//+/g')
+modified_module=$(echo ${module} | sed 's?\./??g' | sed 's/\//+/g')
 
-if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/"${modifiedslug_with_sha}=${modified_module}".zip" ]]; then
-    PIPESTATUS[0]=0
-    ret=${PIPESTATUS[0]}
-    exit $ret
+if [[ -f "$AZ_BATCH_TASK_WORKING_DIR/$input_container/projects/"${modifiedslug_with_sha}=${modified_module}".zip" ]]; then
+    exit 0
 fi
 
 echo "================Installing the project: $(date)"
@@ -156,4 +156,11 @@ cp "${modifiedslug_with_sha}=${modified_module}".zip ~/$input_container
 cd ~/$slug
 
 ret=${PIPESTATUS[0]}
+
+cd ~/
+zip -rq "${modifiedslug_with_sha}=${modified_module}".zip ${slug%/*}
+mkdir -p ~/$input_container/projects && cp "${modifiedslug_with_sha}=${modified_module}".zip ~/$input_container/projects
+echo "$AZ_BATCH_TASK_WORKING_DIR/$input_container/projects/"${modifiedslug_with_sha}=${modified_module}".zip is created and saved"
+cd ~/$slug
+
 exit $ret

@@ -38,12 +38,21 @@ bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}"
 ret=${PIPESTATUS[0]}
 if [[ $ret != 0 ]]; then
     if [[ $ret == 2 ]]; then
-      echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_clone" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
-    else
-        echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_checkout" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
-    fi  
-    echo "Compilation failed. Actual: $ret"
-    exit 1
+        echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_clone" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+        echo "Couldn't download the project. Actual: $ret"
+        exit 1
+    elif [[ $ret == 1 ]]; then
+        cd ~/
+        wget "https://github.com/$slug/archive/$sha".zip
+        ret=${PIPESTATUS[0]}
+        if [[ $ret != 0 ]]; then
+            echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_checkout" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+            echo "Compilation failed. Actual: $ret"
+            exit 1
+        else
+            echo "$line,${modifiedslug_with_sha}=${modified_module},passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+        fi
+    fi     
 fi
 
 cd ~/$slug

@@ -33,9 +33,9 @@ else
     echo "SHA is $(git rev-parse HEAD)"
 fi
 
-short_latest_sha="$(git rev-parse HEAD)"| cut -c1-7
+short_latest_sha="$(git rev-parse HEAD)" | cut -c1-7
 
-if [[short_latest_sha  == "$sha" ]]; then
+if [[$short_latest_sha  == "$sha" ]]; then
     exit 0
 else
     exit 1

@@ -5,11 +5,6 @@ sha=$(echo $modified_slug_sha_module | rev | cut -d'=' -f2 | cut -d'-' -f1 | rev
 
 cd ~/
 
-if [[ ! -d "dependencies_$modified_slug_sha_module" ]] && [[ -f "$input_container/dependencies_$modified_slug_sha_module.zip" ]]; then
-    cp $input_container/dependencies_$modified_slug_sha_module.zip .
-    unzip -q dependencies_$modified_slug_sha_module.zip
-fi
-
 if [[ -d $slug ]]; then
     echo "The project is already in the working directory"
     cd $slug
@@ -33,9 +28,14 @@ else
     echo "SHA is $(git rev-parse HEAD)"
 fi
 
-short_latest_sha="$(git rev-parse HEAD)" | cut -c1-7
+if [[ ! -d "dependencies_$modified_slug_sha_module" ]] && [[ -f "$input_container/dependencies_$modified_slug_sha_module.zip" ]]; then
+    cp $input_container/dependencies_$modified_slug_sha_module.zip .
+    unzip -q dependencies_$modified_slug_sha_module.zip
+fi
 
-if [[$short_latest_sha  == "$sha" ]]; then
+latest_sha= $(git rev-parse HEAD)
+
+if [[ ${latest_sha:0:7}  == "$sha" ]]; then
     exit 0
 else
     exit 1

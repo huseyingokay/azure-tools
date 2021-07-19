@@ -33,7 +33,7 @@ else
     echo "SHA is $(git rev-parse HEAD)"
 fi
 
-if [[ "$(git rev-parse HEAD)" == "$sha" ]]; then
+if [[ "$(echo "$(git rev-parse HEAD)")" | cut -c1-7 == "$sha" ]]; then
     exit 0
 else
     exit 1

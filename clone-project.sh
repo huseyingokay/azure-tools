@@ -33,9 +33,7 @@ if [[ ! -d "dependencies_$modified_slug_sha_module" ]] && [[ -f "$input_containe
     unzip -q dependencies_$modified_slug_sha_module.zip
 fi
 
-latest_sha= $(git rev-parse HEAD)
-
-if [[ ${latest_sha:0:7}  == "$sha" ]]; then
+if [[ "$(git rev-parse HEAD):0:7" == "$sha" ]]; then
     exit 0
 else
     exit 1

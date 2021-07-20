@@ -46,13 +46,29 @@ if [[ $ret != 0 ]]; then
         wget "https://github.com/$slug/archive/$sha".zip
         ret=${PIPESTATUS[0]}
         if [[ $ret != 0 ]]; then
-            echo "$line,${modifiedslug_with_sha}=${modified_module},failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+            echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_checkout_or_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
             echo "Compilation failed. Actual: $ret"
             exit 1
         else
-            echo "$line,${modifiedslug_with_sha}=${modified_module},passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+            echo "git checkout failed but wget successfully downloaded the project and sha, proceeding to the rest of this script"
+            bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
+            ret=${PIPESTATUS[0]}
+            cd ~/
+
+            mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
+
+            if [[ $ret != 0 ]]; then 
+                echo "$line,${modifiedslug_with_sha}=${modified_module},failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+                exit 0
+            else
+                echo "$line,${modifiedslug_with_sha}=${modified_module},passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+                exit 0
+            fi
         fi
-    fi     
+    else
+        echo "Compilation failed. Actual: $ret"
+        exit 1   
+    fi  
 fi
 
 cd ~/$slug

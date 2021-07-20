@@ -44,7 +44,7 @@ if [[ $ret != 0 ]]; then
         exit 1
     elif [[ $ret == 1 ]]; then
         cd ~/
-        rm ${slug%/*}
+        rm -rf ${slug%/*}
         wget "https://github.com/$slug/archive/$sha".zip
         ret=${PIPESTATUS[0]}
         if [[ $ret != 0 ]]; then

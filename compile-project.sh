@@ -32,17 +32,17 @@ short_sha=${sha:0:7}
 modifiedslug_with_sha="${modifiedslug}-${short_sha}"
 modified_slug_module="${modifiedslug_with_sha}=${modified_module}"
 
-MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local='$AZ_BATCH_TASK_WORKING_DIR/dependencies_$modified_slug_module' -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/dependencies_$modified_slug_module -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 # echo "================Cloning the project"
 bash $dir/clone-project.sh "$slug" "$modified_slug_module" "$input_container"
-ret=${PIPESTATUS[0]}
-if [[ $ret != 0 ]]; then
-    if [[ $ret == 2 ]]; then
+ret1=${PIPESTATUS[0]}
+if [[ $ret1 != 0 ]]; then
+    if [[ $ret1 == 2 ]]; then
         echo "$line,$modified_slug_module,cannot_clone" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
-        echo "Couldn't download the project. Actual: $ret"
+        echo "Couldn't download the project. Actual: $ret1"
         exit 1
-    elif [[ $ret == 1 ]]; then
+    elif [[ $ret1 == 1 ]]; then
         cd ~/
         rm -rf ${slug%/*}
         wget "https://github.com/$slug/archive/$sha".zip
@@ -59,23 +59,10 @@ if [[ $ret != 0 ]]; then
             to_be_deleted=${PWD##*/}  
             mv * ../
             cd ../
-            rm -rf $to_be_deleted
-            echo $PWD
-            bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
-            ret=${PIPESTATUS[0]}
-
-            mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
-
-            if [[ $ret != 0 ]]; then 
-                echo "$line,$modified_slug_module,failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
-                exit 0
-            else
-                echo "$line,$modified_slug_module,passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
-                exit 0
-            fi
+            rm -rf $to_be_deleted  
         fi
     else
-        echo "Compilation failed. Actual: $ret"
+        echo "Compilation failed. Actual: $ret1"
         exit 1   
     fi  
 fi
@@ -111,12 +98,18 @@ ret=${PIPESTATUS[0]}
 cd ~/
 
 mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
-
-if [[ $ret != 0 ]]; then 
-    echo "$line,$modified_slug_module,failed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
+if [[ $ret1 != 0]]; then
+    if [[ $ret != 0 ]]; then 
+        echo "$line,$modified_slug_module,failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
+    else
+        echo "$line,$modified_slug_module,passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
+    fi
 else
-    echo "$line,$modified_slug_module,passed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
+    if [[ $ret != 0 ]]; then 
+        echo "$line,$modified_slug_module,failed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
+    else
+        echo "$line,$modified_slug_module,passed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
+    fi
 fi
-
 endtime=$(date)
 echo "endtime: $endtime"

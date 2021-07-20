@@ -80,6 +80,7 @@ if [[ $ret != 0 ]]; then
 fi
 
 cd ~/$slug
+echo $PWD
 
 # echo "================Installing the project"
 if [[ -z $module ]]; then

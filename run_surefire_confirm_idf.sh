@@ -62,25 +62,15 @@ if [[ $ret != 0 ]]; then
             to_be_deleted=${PWD##*/}  
             mv * ../
             cd ../
-            rm -rf $to_be_deleted
-            bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
-            ret=${PIPESTATUS[0]}
-
-            mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
-
-            if [[ $ret != 0 ]]; then 
-                echo "$line,$modified_slug_module,failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
-                exit 0
-            else
-                echo "$line,$modified_slug_module,passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
-                exit 0
-            fi
+            rm -rf $to_be_deleted  
         fi
     else
         echo "Compilation failed. Actual: $ret"
         exit 1   
     fi  
 fi
+
+cd ~/$slug
 
 if [[ -z $module ]]; then
     echo "================ Missing module. Exiting now!"

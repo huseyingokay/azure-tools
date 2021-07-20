@@ -79,6 +79,8 @@ if [[ $ret != 0 ]]; then
     fi  
 fi
 
+cd ~/$slug
+
 # echo "================Installing the project"
 if [[ -z $module ]]; then
     module=$classloc

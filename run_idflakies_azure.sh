@@ -39,7 +39,7 @@ bash $dir/clone-project.sh "$slug" "$modified_slug_module" "$input_container"
 ret=${PIPESTATUS[0]}
 if [[ $ret != 0 ]]; then
     if [[ $ret == 2 ]]; then
-        echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_clone" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+        echo "$line,$modified_slug_module,cannot_clone" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
         echo "Couldn't download the project. Actual: $ret"
         exit 1
     elif [[ $ret == 1 ]]; then
@@ -47,7 +47,7 @@ if [[ $ret != 0 ]]; then
         wget "https://github.com/$slug/archive/$sha".zip
         ret=${PIPESTATUS[0]}
         if [[ $ret != 0 ]]; then
-            echo "$line,${modifiedslug_with_sha}=${modified_module},cannot_checkout_or_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+            echo "$line,$modified_slug_module,cannot_checkout_or_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
             echo "Compilation failed. Actual: $ret"
             exit 1
         else
@@ -59,10 +59,10 @@ if [[ $ret != 0 ]]; then
             mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
 
             if [[ $ret != 0 ]]; then 
-                echo "$line,${modifiedslug_with_sha}=${modified_module},failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+                echo "$line,$modified_slug_module,failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
                 exit 0
             else
-                echo "$line,${modifiedslug_with_sha}=${modified_module},passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+                echo "$line,$modified_slug_module,passed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
                 exit 0
             fi
         fi

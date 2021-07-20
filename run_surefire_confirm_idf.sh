@@ -35,10 +35,10 @@ timestamp=$(date +%s)
 RESULTSDIR=~/output-${timestamp}/${modifiedslug_with_sha}
 mkdir -p ${RESULTSDIR}
 
-MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/dependencies_${modifiedslug_with_sha}=${modified_module} -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
+MVNOPTIONS="-Ddependency-check.skip=true -Dmaven.repo.local=$AZ_BATCH_TASK_WORKING_DIR/dependencies_$modified_slug_module -Dgpg.skip=true -DfailIfNoTests=false -Dskip.installnodenpm -Dskip.npm -Dskip.yarn -Dlicense.skip -Dcheckstyle.skip -Drat.skip -Denforcer.skip -Danimal.sniffer.skip -Dmaven.javadoc.skip -Dfindbugs.skip -Dwarbucks.skip -Dmodernizer.skip -Dimpsort.skip -Dmdep.analyze.skip -Dpgpverify.skip -Dxml.skip -Dcobertura.skip=true -Dfindbugs.skip=true"
 
 # echo "================Cloning the project"
-bash $dir/clone-project.sh "$slug" "${modifiedslug_with_sha}=${modified_module}" "$input_container"
+bash $dir/clone-project.sh "$slug" "$modified_slug_module" "$input_container"
 ret=${PIPESTATUS[0]}
 if [[ $ret != 0 ]]; then
     if [[ $ret == 2 ]]; then
@@ -47,6 +47,7 @@ if [[ $ret != 0 ]]; then
         exit 1
     elif [[ $ret == 1 ]]; then
         cd ~/
+        rm -rf ${slug%/*}
         wget "https://github.com/$slug/archive/$sha".zip
         ret=${PIPESTATUS[0]}
         if [[ $ret != 0 ]]; then
@@ -55,9 +56,15 @@ if [[ $ret != 0 ]]; then
             exit 1
         else
             echo "git checkout failed but wget successfully downloaded the project and sha, proceeding to the rest of this script"
+            mkdir -p $slug
+            unzip -q $sha -d $slug
+            cd $slug/*
+            to_be_deleted=${PWD##*/}  
+            mv * ../
+            cd ../
+            rm -rf $to_be_deleted
             bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
             ret=${PIPESTATUS[0]}
-            cd ~/
 
             mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
 
@@ -106,9 +113,6 @@ pip install BeautifulSoup4
 pip install lxml
 
 echo "================Running intended and revealed orders for tests"
-
-
-modified_slug_module="${modifiedslug_with_sha}=${modified_module}"
 
 permClassFile="Tests_${modified_slug_module}"
 rm -f $permClassFile

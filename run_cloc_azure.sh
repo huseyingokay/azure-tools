@@ -37,6 +37,7 @@ if [[ $ret != 0 ]]; then
         exit 1
     elif [[ $ret == 1 ]]; then
         cd ~/
+        rm -rf ${slug%/*}
         wget "https://github.com/$slug/archive/$sha".zip
         ret=${PIPESTATUS[0]}
         if [[ $ret != 0 ]]; then
@@ -45,9 +46,15 @@ if [[ $ret != 0 ]]; then
             exit 1
         else
             echo "git checkout failed but wget successfully downloaded the project and sha, proceeding to the rest of this script"
+            mkdir -p $slug
+            unzip -q $sha -d $slug
+            cd $slug/*
+            to_be_deleted=${PWD##*/}  
+            mv * ../
+            cd ../
+            rm -rf $to_be_deleted
             bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
             ret=${PIPESTATUS[0]}
-            cd ~/
 
             mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
 

@@ -109,9 +109,9 @@ cd ~/
 mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
 
 if [[ $ret != 0 ]]; then 
-    echo "$line,${modifiedslug_with_sha}=${modified_module},failed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+    echo "$line,$modified_slug_module,failed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
 else
-    echo "$line,${modifiedslug_with_sha}=${modified_module},passed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"${modifiedslug_with_sha}=${modified_module}-results".csv
+    echo "$line,$modified_slug_module,passed" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
 fi
 
 endtime=$(date)

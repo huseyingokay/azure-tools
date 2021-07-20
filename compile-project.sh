@@ -53,7 +53,7 @@ if [[ $ret != 0 ]]; then
             exit 1
         else
             echo "git checkout failed but wget successfully downloaded the project and sha, proceeding to the rest of this script"
-            mkdir $slug
+            mkdir -p $slug
             unzip -q $sha -d $slug
             cd $slug/*
             to_be_deleted=${PWD##*/}  

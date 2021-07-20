@@ -6,6 +6,7 @@ sha=$(echo $modified_slug_sha_module | rev | cut -d'=' -f2 | cut -d'-' -f1 | rev
 cd ~/
 
 if [[ ! -d "dependencies_$modified_slug_sha_module" ]] && [[ -f "$input_container/dependencies_$modified_slug_sha_module.zip" ]]; then
+    echo "Local dependencies are copied"
     cp $input_container/dependencies_$modified_slug_sha_module.zip .
     unzip -q dependencies_$modified_slug_sha_module.zip
 fi

@@ -68,7 +68,6 @@ if [[ $ret1 != 0 ]]; then
 fi
 
 cd ~/$slug
-echo $PWD
 
 # echo "================Installing the project"
 if [[ -z $module ]]; then
@@ -98,7 +97,7 @@ ret=${PIPESTATUS[0]}
 cd ~/
 
 mkdir -p $AZ_BATCH_TASK_WORKING_DIR/$input_container/results
-if [[ $ret1 != 0]]; then
+if [[ $ret1 != 0 ]]; then
     if [[ $ret != 0 ]]; then 
         echo "$line,$modified_slug_module,failed_wget" >> $AZ_BATCH_TASK_WORKING_DIR/$input_container/results/"$modified_slug_module-results".csv
     else

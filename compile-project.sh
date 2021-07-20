@@ -60,6 +60,7 @@ if [[ $ret != 0 ]]; then
             mv * ../
             cd ../
             rm -rf $to_be_deleted
+            echo $PWD
             bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
             ret=${PIPESTATUS[0]}
 

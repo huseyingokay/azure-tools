@@ -51,7 +51,7 @@ if [[ $ret != 0 ]]; then
             exit 1
         else
             echo "git checkout failed but wget successfully downloaded the project and sha, proceeding to the rest of this script"
-            unzip -q "https://github.com/$slug/archive/$sha".zip
+            unzip -q ${modifiedslug_with_sha}=${modified_module}.zip
             bash $dir/install-project.sh "$slug" "$MVNOPTIONS" "$USER" "$module" "$sha" "$dir" "$fullTestName" "${RESULTSDIR}" "$input_container"
             ret=${PIPESTATUS[0]}
             cd ~/

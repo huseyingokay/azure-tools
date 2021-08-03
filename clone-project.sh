@@ -3,7 +3,7 @@ modified_slug_sha_module=$2
 input_container=$3
 sha=$(echo $modified_slug_sha_module | rev | cut -d'=' -f2 | cut -d'-' -f1 | rev)
 
-cd ~/
+cd /mnt/batch/tasks/workitems/SUA_tmp_r2_7M21d18h23m34s/job-1
 
 if [[ ! -d "dependencies_$modified_slug_sha_module" ]] && [[ -f "$input_container/dependencies_$modified_slug_sha_module.zip" ]]; then
     cp $input_container/dependencies_$modified_slug_sha_module.zip .
